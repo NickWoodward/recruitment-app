@@ -1,0 +1,81 @@
+@use '../abstract' as a;
+
+.application {
+    grid-row: 1/span 3;
+    grid-column: 2 / -1;
+
+    display: grid;
+    grid-template-rows: min-content min-content;
+    row-gap: a.$margin-sm;
+  
+
+}
+
+.user, .position {
+    display: flex;
+    background-color: white;
+    border-radius: a.$radius-m;
+    box-shadow: a.$shadow;
+}
+
+.user, .position {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    
+    &__avatar {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-basis: 20%;
+        padding: 2rem;
+        border: 1px dashed lightgrey;
+        cursor: pointer;
+
+    }
+    &__image {
+        width: 12rem;
+        height: 12rem;
+        border-radius: 100%;
+    
+        color: #ececec;
+        background-color: white;
+    
+    }
+    &__upload {
+        display: flex;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    &__upload-icon {
+        height: 2.5rem;
+        width: 2.5rem;
+        transform: rotateY(180deg) translateY(-4px);
+    }
+    &__upload-text {
+        margin-left: 1.4rem;
+        & > span {
+            color: firebrick;
+        }
+    }
+
+
+}
+
+.user {
+    &__details {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        column-gap: 4rem;
+        padding: 2rem;
+    }
+}
+.position {
+    &__details {
+        display: grid;
+        grid-template-columns: 4fr 5fr;
+        column-gap: 4rem;
+        padding: 2rem;
+    }
+}

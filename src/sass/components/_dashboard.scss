@@ -1,0 +1,21 @@
+@use '../abstract' as a;
+
+.dashboard {
+    flex-grow: 1;
+    padding: 0 4rem 0 2rem;
+
+    font-size: 1.4rem;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+
+    &__content {
+        display: grid;
+        grid-template-columns: min-content repeat(5, 1fr);
+        grid-template-rows: min-content min-content;
+        column-gap: a.$margin-md;
+
+        row-gap: a.$margin-md;
+        height: 100%;
+    }
+}
+

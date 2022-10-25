@@ -1,0 +1,117 @@
+@use '../abstract/colors' as a;
+
+.profile {
+    &__item {
+        display: flex;
+        font-size: 1.6rem;
+
+        &:not(:last-of-type, &--prev-job, &--name) {
+            margin-bottom: .7rem;
+        }
+
+        & > div {
+            &:not(:last-of-type) {
+                margin-right: 1rem;
+            }
+        }
+
+        &--prev-job {
+            margin-bottom: 2.5rem;
+        }
+    }
+    &__label {
+
+    }
+    &__field {
+        color: a.$color-font-grey;
+    }
+}
+
+.profile__item--name, 
+.profile__item--prev-job,
+.profile__item--email,
+.profile__item--phone,
+.profile__item--cv,
+.profile__item--contact,
+.profile__item--contact-position {
+    grid-column: 1;
+}
+.profile__item--contact-phone,
+.profile__item--contact-email {
+    grid-column: 2;
+}
+.profile__item--contact-phone {
+    grid-row: 3;
+}
+
+.profile__item--email,
+.profile__item--phone,
+.profile__item--cv {
+    display: flex;
+}
+.profile__label--email,
+.profile__label--phone,
+.profile__label--cv,
+.profile__label--contact,
+.profile__label--contact-position,
+.profile__label--contact-phone,
+.profile__label--contact-email {
+    flex-grow: 1;
+}
+
+.cv__upload {
+    grid-column: 2;
+    grid-row: 3 / span 3;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.2rem;
+    border: 1px dashed lightgrey;
+
+    &-text {
+        margin-right: 1.2rem;
+        text-align: right;
+        z-index: 1;
+        & > span {
+            display: block;
+            color: firebrick;
+        }
+    
+    }
+
+    &-icon {
+        height: 4.5rem;
+        width: 4.5rem;
+        color: #ececec;
+        background-color: white;
+    }
+}
+
+.profile__field--name {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: a.$color-font-black;
+}
+.profile__field--prev-job {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.profile__icon--email, 
+.profile__icon--phone,
+.profile__icon--contact,
+.profile__icon--contact-position,
+.profile__icon--contact-phone,
+.profile__icon--contact-email {
+    width: 2rem;
+    color: firebrick;
+}
+.profile__icon--cv {
+    width: 2.2rem;
+    color: firebrick;
+}
+
+

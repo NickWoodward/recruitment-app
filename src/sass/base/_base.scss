@@ -1,0 +1,62 @@
+@use '../abstract' as a;
+
+*, 
+*::after, 
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+:root {
+    --header-height: 7rem;
+    --header-padding-h: 2rem;
+}
+
+html {
+    font-size: 62.5%; // 10/16*100 = 62.5%
+    height: 100%;
+    // Set to hidden for both the html and body tags - prevents the first section's margin from overflowing
+    // See: https://codepen.io/nwoodward/pen/poVbVOV?editors=1100
+}
+
+body {
+    font-weight: 400;
+    box-sizing: border-box;
+    height: 100%;
+    // Fixed header fix
+    border-top: 1px solid transparent;
+
+    // For page fade in/animation
+    // visibility: hidden;
+}
+
+main {
+    height: 100%;
+}
+
+ul {
+    list-style: none;
+}
+
+textarea, input {
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+// Get rid of the autofill bg color
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+
+.error {
+    color: a.$color-failure;
+}
+.success {
+    color: a.$color-highlight;
+}

@@ -1,0 +1,47 @@
+{
+  "name": "jennings-final",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "webpack serve --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.18.5",
+    "@babel/preset-env": "^7.18.2",
+    "babel-loader": "^8.2.5",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^6.7.1",
+    "file-loader": "^6.2.0",
+    "html-loader": "^3.1.2",
+    "html-webpack-plugin": "^5.5.0",
+    "image-webpack-loader": "^8.1.0",
+    "mini-css-extract-plugin": "^2.6.1",
+    "sass": "^1.53.0",
+    "sass-loader": "^13.0.1",
+    "style-loader": "^3.3.1",
+    "svg-sprite-loader": "^6.0.11",
+    "svgo-loader": "^3.0.1",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.2",
+    "webpack-merge": "^5.8.0"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "chart.js": "^3.9.1",
+    "core-js": "^3.23.3",
+    "gsap": "^3.10.4",
+    "joi": "^17.6.0",
+    "socket.io-client": "^4.5.1"
+  },
+  "overrides": {
+    "semver-regex": "3.1.4",
+    "postcss": "8.4.14",
+    "got": "12.1.0"
+  }
+}

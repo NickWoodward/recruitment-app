@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JRS</title>
+</head>
+<body>
+    <main>
+        <header class="header"></header>
+        
+        <!-- HERO SECTION -->
+        <section class="hero parallax">
+
+            <picture>
+                <source
+                    media="(max-width: 390px)"
+                    srcset="./assets/images/hero-400.webp 400w"
+                                        >
+                <source
+                    media="(max-width: 500px)"
+                    srcset="./assets/images/hero-500.webp 500w,
+                            ./assets/images/hero-600.webp 600w"
+                                        >
+                <source
+                    media="(max-width: 600px)"
+                    srcset="./assets/images/hero-600.webp 600w"
+                                        >
+                <source
+                    media="(max-width: 900px)"
+                    srcset="./assets/images/hero-900.webp 900w"    
+                                        >
+                <source
+                    media="(max-width: 1200px)"
+                    srcset="./assets/images/hero-1200.webp 1200w"
+                >
+                <source
+                    media="(max-width: 1500px)"
+                    srcset="./assets/images/hero-1500.webp 1500w"
+                    width="1500"
+                >
+                <source
+                    media="(max-width: 1920px)"
+                    srcset="./assets/images/hero-1903.webp 1903w"
+                    width="1920"
+                >
+                <source
+                    media="(min-width: 1921px)"
+                    srcset="./assets/images/hero-1903.webp 1903w"
+                    width="100%"
+                >
+
+                <img src="./assets/images/hero-1200.webp" alt="" class="hero__background-image">
+            </picture> 
+
+            <div class="hero__gradient"></div>
+            <div class="hero__content">
+                <div class="hero__text">
+                    <h1 class="hero__text--heading">Legal Recruitment</h1>
+                    <p class="hero__text--sub-heading">at its best</p>
+                    <p class="hero__text--description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi perspiciatis distinctio laudantium amet</p>
+                </div>
+                <div class="hero__btn-wrapper">
+                    <button class="btn hero__btn hero__btn--contact">Contact Us</button>
+                    <button class="btn hero__btn hero__btn--browse">Browse our roles</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOB SEARCH SECTION -->
+        <section class="job-search static"></section>
+    </main>
+</body>
+</html>

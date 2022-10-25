@@ -1,0 +1,88 @@
+@use '../abstract' as a;
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: min-content min-content;
+    column-gap: a.$margin-sm;
+    row-gap: a.$margin-sm;
+
+    grid-row: 1;
+
+    width: 80rem;
+
+    &__heading {
+        grid-column-start: 1;
+        grid-column-end: span 3;
+    }
+
+    &__item, &__graph {
+        background-color: white;
+        box-shadow: a.$shadow;
+        border-radius: a.$radius-m;
+    } 
+
+    &__item {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        
+        height: 10rem;
+        padding: 2rem;
+        cursor: pointer;
+
+        &--active-users {
+            grid-column: 1;
+        }
+        &:hover, &--selected {
+            fill: white;
+            border-bottom: 1px solid a.$color-secondary;
+        }
+    }
+
+    &__graph {
+        grid-column: 1/4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 20rem;
+        padding: 1.5rem 3rem ;
+    }
+
+    // STAT DETAILS
+    &__title {
+        color: a.$color-font-grey;
+    }
+    &__content {
+        display: flex;
+        align-items: baseline;
+    }
+    &__text {
+        font-size: 3rem;
+    }
+    &__percentage {
+        margin-left: 1rem;
+        font-weight: 700;
+    }
+    // STAT DETAIL END
+
+    &__icon {
+        height: 5.5rem;
+        width: 5.5rem;
+        padding: .6rem;
+        background-color: a.$color-primary;
+        border-radius: a.$radius-m;
+        fill: white;
+
+        &--daily {
+            padding: .9rem;
+        }
+        &--monthly {
+            padding: .7rem;
+        }
+    }
+}
+
+.graph__canvas {
+    height: 100%;
+}

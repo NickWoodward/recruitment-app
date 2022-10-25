@@ -1,0 +1,35 @@
+@use '../abstract' as a;
+
+.admin {
+    &__wrapper {
+        display: flex;
+        height: 100%;
+        width: 100%;
+
+        padding: a.$padding-md 0;
+        margin-top: var(--header-height);
+
+        background-color: a.$color-background;
+    }
+
+    &__heading {
+        grid-column: 1/-1;
+        display: flex;
+        align-items: center;
+        height: 5.5rem;
+        padding: 0 a.$padding-sm;
+
+        border-radius: a.$radius-m a.$radius-m 0 0;
+        box-shadow: a.$shadow;
+        background-color: a.$color-primary;
+        color: white;
+    }
+}
+
+.chevron-btn--applications {
+    width: 2rem;
+    margin-left: auto;
+    transform: rotate(-90deg);
+    cursor: pointer;
+}
+

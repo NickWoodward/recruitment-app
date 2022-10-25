@@ -1,0 +1,10 @@
+@use '../abstract' as a;
+
+.applications {
+    grid-row: 2;
+
+    &__heading {
+        margin-bottom: a.$margin-sm;
+    }
+}
+
