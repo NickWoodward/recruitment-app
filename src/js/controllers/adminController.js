@@ -3,6 +3,7 @@
 import Header from '../views/layout/Header';
 import AdminSidebar from "../views/admin/AdminSidebar";
 import AdminDashboard from '../views/admin/AdminDashboard';
+import ApplicationsTable from '../views/admin/ApplicationsTable';
 import Stats from '../views/admin/Stats';
 
 // Models
@@ -10,34 +11,49 @@ import * as ApplicationModel from '../models/applicationModel';
 
 import '../../sass/admin.scss';
 
-
-
 const init = async () => {
     Header.render({admin: true, page: 'admin'});
 
     try {
-
         // Get initial application data
         const results = await Promise.all([
             ApplicationModel.fetchApplications(),
             ApplicationModel.fetchApplicationStats()
         ]);
-        const { rows } = results[0];
-        // const { activeUsers, dailyApplications, monthlyApplications } = results[1];
+        // Stats
         const { thisWeek, lastWeek, appsPerMonth } = results[1];
 
-        console.log(thisWeek, lastWeek, appsPerMonth);
+        // Get the number of rows the application table is set to display
+        const numRows = ApplicationsTable.getNumRows();
 
-        const testRows2 = [
-            [1, 'Jack Sparrow', 'Junior Legal Counsel', 'Dell', '22/03/21'],
-            [2, 'Kelly Slater', 'Legal Counsel', 'Anker', '02/10/22'],
-            [3, 'Emily Burrows', 'Legal Assistant', 'Anker', '11/05/22'],
-            [4, 'Jeff Holmes', 'Legal Assistant', 'London Fields', '11/05/22']
+        // Rows are retrieved from the model separately to the fetch call
+        let rows = ApplicationModel.getApplications(numRows);
 
-        ]
+
+        // This should be in the model
+        rows = rows.map(row => {
+            const { 
+                id,
+                applicant: { 
+                    person: {
+                        firstName,
+                        lastName
+                    }
+                 },
+                 job: {
+                    title,
+                    company: {
+                        name: companyName
+                    }
+                 },
+                 applicationDate
+             } = row;
+
+             return [id, `${firstName} ${lastName}`, title, companyName, applicationDate]
+        });
         const testData = {
             heads: ['Id', 'Name', 'Position', 'Company', 'Added'],
-            rows: testRows2,
+            rows: rows,
             type: 'applications',
             modifiers: ['checkbox', 'id', 'name', 'position', 'company', 'added']
         }

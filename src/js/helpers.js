@@ -14,6 +14,27 @@ export const timeout = (sec) => {
     });
 };
 
+export const createDeepCopy = (obj) => {
+    const CloneSymbol = Symbol('clone');
+    Date.prototype[CloneSymbol] = d => new Date(d.getTime());
+
+    const m = Object.entries(obj).map(([k, v]) => {
+        if (v === null) return [k, v];
+        if (typeof v === 'object') {           
+            const fn = v.constructor
+            .prototype[CloneSymbol];
+            return [k, fn ? fn(v) : createDeepCopy(v)]
+        } else return [k, v];
+    });
+
+    return (
+        Array.isArray(obj) ? m.reduce((a, [i, v]) => {
+            a[i] = v;
+            return a;
+        }, []) : Object.fromEntries(m)
+    );
+};
+
 
 export const createChevron = (modifier, strokeWidth = '1.5rem') => {
     return `
@@ -136,3 +157,19 @@ export const createDocxIcon = () => {
         </svg>
     `);
 }
+
+export const createSearchBtn = (type) => {
+    return `
+        <div class="btn-wrapper btn-wrapper--${type}">            
+            <div class="search search--${type} search-btn--${type} btn">
+                <input type="text" class="search__input search__input--${type}" />
+                <div class="search__icon--${type}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+
+                </div>
+            </div>
+        </div>
+    `;
+};

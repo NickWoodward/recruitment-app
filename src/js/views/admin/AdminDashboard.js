@@ -9,12 +9,10 @@ class AdminDashboard extends View {
 
     _generateMarkup() {
         // Initialise nested components
-        // const statsMarkup = Stats.render(this._data.stats, false);
-        console.log(this._data);
         const statsMarkup = Stats.render({
             numOfMonths: this._numOfMonths,
-            activeUsers: this._data.activeUsers, 
-            thisWeek: this._data.thisWeek,
+            activeUsers: this._data.stats.activeUsers, 
+            thisWeek: this._data.stats.thisWeek,
             monthlyApplications: 39
         }, false);
 
@@ -31,6 +29,7 @@ class AdminDashboard extends View {
     }
 
 }
+// ${statsMarkup}
 
 
 

@@ -1,14 +1,14 @@
 @use '../abstract' as a;
 
 .stats {
+
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: min-content min-content;
     column-gap: a.$margin-sm;
     row-gap: a.$margin-sm;
 
-    grid-row: 1;
-
+    grid-row: 2;
     width: 80rem;
 
     &__heading {
@@ -45,7 +45,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 20rem;
+        height: 25rem;
         padding: 1.5rem 3rem ;
     }
 

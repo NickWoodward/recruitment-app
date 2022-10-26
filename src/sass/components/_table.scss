@@ -1,8 +1,8 @@
 @use '../abstract' as a;
 
 table {
-    --row-height: 7rem;
-    --row-padding: 1.5rem;
+    --row-padding--sm: 1.5rem;
+    --row-padding--md: 2.5rem;
 
     display: table;
     table-layout: fixed;
@@ -11,23 +11,29 @@ table {
 }
 
 th {
+    position: relative;
     text-align: left;
-    background-color: #f9fafb;
+    // background-color: #f9fafb;
     &:first-of-type {
-        padding-left: var(--row-padding);
+        padding-left: var(--row-padding--md);
     }
     &:last-of-type {
-        padding-right: var(--row-padding);
+        padding-right: var(--row-padding--md);
     }
 }
-tr {
+
+.th__data {
     position: relative;
-    border-bottom: 1px solid #edeef1;    
+    display: inline;
+}
+
+tbody tr {
+    position: relative;
+    border-bottom: a.$table-border;    
    
     &:last-of-type {
         border-bottom: none;
     }
-
 
     &:hover {
         color: white;
@@ -39,8 +45,28 @@ tr {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 4.5rem;
+    height: var(--table-controls-height--applications);
     width: 100%;
+    padding: 0 1.5rem;
+    border-top: a.$table-border;
+}
+
+.table__arrow {
+    position: absolute;
+    top: 50%;
+
+    display: flex;
+    width: 1.4rem;
+    fill: a.$color-primary;
+
+    &:not(&--added) {
+        right: 0;
+        transform: translateY(-50%) translateX(calc(100% + 1rem));
+    }
+    &--added {
+        left: 0;
+        transform: translateY(-50%) translateX(calc(-100% - 1rem));
+    }
 }
 
 .search--table {
@@ -51,7 +77,6 @@ tr {
     margin-left: 1rem;
     background-color: white;
     border-radius: a.$radius-m;
-    box-shadow: a.$shadow;
 }
 .search__input {
     border: none;
@@ -86,12 +111,12 @@ tr {
     grid-column: 1;
     display: grid;
     grid-template-rows: min-content min-content;
-    row-gap: a.$margin-xs;
+    row-gap: a.$margin-sm;
 }
 
 .table__content--applications {
     grid-column: 1;
-    height: 33rem;
+    height: var(--table-height--applications);
     background-color: white;
     border-radius: a.$radius-m;
     box-shadow: a.$shadow;
@@ -102,7 +127,7 @@ tr {
 }
 
 .tr--applications {
-    height: var(--row-height);
+    height: var(--row-height--applications);
     font-size: 1.5rem;
     color: a.$color-font-black;
 
@@ -111,21 +136,20 @@ tr {
     & td {
         // border: 1px solid grey;
         &:first-of-type {
-            padding-left: var(--row-padding);
+            padding-left: var(--row-padding--md);
         }
  
     }
 }
 thead .tr--applications {
-    --row-height: 5rem;
     color: a.$color-font-grey;
 
-    height: var(--row-height);
+    height: var(--thead-height--applications);
     border-bottom: 1px solid #d5d8de;
 }
 
 .th--checkbox {
-    width: 5.5rem;
+    width: 6.5rem;
 }
 .th--name {
     width: 18rem;
@@ -142,11 +166,12 @@ thead .tr--applications {
 .th--added, .td--added {
     text-align: right;
 }
-.th--edit {
+.th--search {
     width: 12rem;
 }
 .td--edit {
-    text-align: center;
+    text-align: right;
+    padding-right: calc(var(--row-padding--md) + .8rem);
     font-weight: 700;
     color: firebrick;
 }
@@ -160,7 +185,6 @@ thead .tr--applications {
 
 .btn-wrapper{
     display: flex;
-    height: 100%;
 
     &--pagination {
         margin-left: auto;
@@ -172,12 +196,12 @@ thead .tr--applications {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 80%;
+    height: 4rem;
     padding: 0 1rem;
     background-color: white;
     color: a.$color-font-primary;
     border-radius: a.$radius-m;
-    box-shadow: a.$shadow;
+    border: a.$table-border;
 
     &:not(:first-of-type) {
         margin-left: .5rem;
@@ -195,6 +219,13 @@ thead .tr--applications {
         color: white;
         background-color: firebrick;
     }
+}
+.search-btn--table {
+    margin-left: auto;
+}
+.chevron-btn--thead {
+    width: 2rem;
+    transform: rotate(-90deg);
 }
 
 .dropdown-btn--table {

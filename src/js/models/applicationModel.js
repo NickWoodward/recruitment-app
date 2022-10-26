@@ -1,4 +1,5 @@
 import * as adminAPI from '../api/adminAPI';
+import { createDeepCopy } from '../helpers';
 
 let state = {
     applications: [],
@@ -16,8 +17,10 @@ let state = {
     }
 }
 
-export const getApplications = () => {
-    return [...state.applications];
+export const getApplications = (num) => {
+    let applications = createDeepCopy(state.applications);
+
+    return applications.slice(0, num);
 };
 
 export const setApplications = (applications) => {

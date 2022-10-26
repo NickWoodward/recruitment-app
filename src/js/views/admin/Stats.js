@@ -6,10 +6,9 @@ Chart.register(...registerables);
 
 
 class Stats extends View {
-    _numOfMonths = 5;
+    _numOfMonths = 12;
 
     _generateMarkup() {
-        console.log(this._data)
         return /*html*/`
             <div class="stats">
                 <div class="stats__heading admin__heading">
