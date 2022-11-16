@@ -6,10 +6,9 @@ let state = {
     total: 0,
     searchOptions: {
         limit: 100,
-        index: 0,
-        orderField: 'id',
-        orderDirection: 'ASC',
-        searchTerm: ''
+        // orderField: 'id',
+        // orderDirection: 'ASC',
+        // searchTerm: ''
     },
     currentApplication: {},
     stats: {
@@ -17,10 +16,41 @@ let state = {
     }
 }
 
-export const getApplications = (num) => {
+export const getTableData = (start, end) => {
+    let rows = getApplications(start, end);
+    let attributes = rows.map(({id, applicantId, jobId}) => {return { id, applicantId, jobId }});
+
+    attributes = attributes.map(attribute => Object.entries(attribute))
+
+    // Format the application content
+    rows = rows.map(row => {
+        const { 
+            id,
+            applicant: { 
+                person: {
+                    firstName,
+                    lastName
+                }
+             },
+             job: {
+                title,
+                company: {
+                    name: companyName
+                }
+             },
+             applicationDate
+         } = row;
+
+         return [`${firstName} ${lastName}`, title, companyName, applicationDate]
+    });
+
+    return { rows, attributes }
+}
+
+export const getApplications = (start, end) => {
     let applications = createDeepCopy(state.applications);
 
-    return applications.slice(0, num);
+    return applications.slice(start, end);
 };
 
 export const setApplications = (applications) => {

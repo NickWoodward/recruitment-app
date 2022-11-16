@@ -207,6 +207,7 @@ export default class Select {
 
 
     })
+    
     select.customSelect.append(select.customOptions);
 
     // Set the customOptions to autoAlpha 0

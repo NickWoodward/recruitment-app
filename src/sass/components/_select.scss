@@ -1,0 +1,336 @@
+@use '../abstract/' as a;
+
+//// GENERIC STYLES ////
+.custom-select,
+.custom-select-value,
+.custom-select-options,
+.custom-select-option {
+    box-sizing: border-box;
+}
+
+.custom-select {
+    position: relative;
+    display: inline-block;
+    position: relative;
+    font-family: inherit;
+}
+
+.custom-select-value {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    // width: 18rem;
+    border: 1px solid lightgrey;
+    padding: .9rem 1rem;
+    font-size: 1.7rem;
+
+    cursor: pointer;
+    user-select: none;
+}
+// .custom-select-value.placeholder {
+//     color: grey;
+// }
+
+
+.custom-select:focus > .custom-select-value {
+    // border-width: 2px;
+    outline: none;
+}
+
+.custom-select-value::after {
+    content: '';
+    display: inline-block;
+    border: 4px solid transparent;
+    border-top-color: black;
+    margin-left: 12px;
+    margin-top: 4px;
+}
+
+.custom-select-options {
+    display: none;
+    position: absolute;
+    padding: 1rem 0;
+    margin:0;
+    border: 1px solid lightgrey;
+    border-top: none;
+    width: 100%;
+    top: 100%;
+    max-height: 20rem;
+    overflow-y: auto;
+    background-color: white;
+    z-index: 210;
+} 
+.custom-select-options.show {
+    display: block;
+}
+
+.custom-select-group {
+    display: flex;
+    position: relative;
+
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+
+.custom-select-group-label::after {
+
+    position: absolute;
+    content: '';
+    bottom: 0;
+    left: 5px;
+    width: 100%;
+}
+
+.custom-select-group-label {
+    position: relative;
+    height: 100%;
+    padding: .3rem 1rem;
+}
+
+.custom-select-svg-wrapper {
+    display: flex;
+    width: 12px;
+    height: 12px;
+    margin-right: .8rem;
+}
+
+.custom-select-svg {
+    // display: none;
+    width: 12px;
+    height: 12px;
+}
+.custom-select-svg.selected {
+    // display: block;
+}
+
+.custom-select-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: .8rem .5rem;
+    cursor: pointer;
+}
+// .custom-select-option:last-of-type {
+//     margin-bottom: 1rem;
+// }
+
+.custom-select-option:hover {
+    background-color: rgb(154, 191, 216);
+    color: white;
+}
+
+.custom-select-option.selected {
+    /* background-color: #36657f; 
+    color: white; */
+}
+
+
+//// SPECIFIC STYLES THAT CAN BE DELETED FOR NEW PROJECTS ////
+.custom-select {
+    --option-width--table: 4.4rem;
+    --option-margin--table: .5rem;
+
+    &--table {
+        font-size: 1.7rem;
+    }
+    &-value--table {
+        height: 4rem;
+        // Width decided by page number digits
+        background-color: white;
+        color: a.$color-font-primary;
+        border-radius: a.$radius-m;
+        border: a.$table-border;
+
+        &:hover {
+            color: white;
+            background-color: a.$color-primary;
+
+            &:after {
+                border-top-color: white;
+
+            }
+        }
+    }
+    &-options--table.show {
+        display: flex;
+        // 1 option to the right, the rest stack left
+        right: calc((var(--option-width--table) + var(--option-margin--table)) * -1);
+        width: auto;
+        padding: 0;
+        margin-top: var(--option-margin--table);
+        background-color: transparent;
+        border: none;
+    }
+    &-option--table {
+        display: flex;
+        justify-content: center;
+        padding: 0.8rem 1rem;
+        width: var(--option-width--table);
+        margin-left: var(--option-margin--table);
+        background-color: white;
+        color: a.$color-font-primary;
+        border-radius: a.$radius-m;
+        border: a.$table-border;
+    }
+    // These are in a table head
+    &--applications,
+    &--companies, &--jobs, &--users {
+        color: white;
+        min-width: 2rem;
+        margin-right: 1.2rem;
+    }
+
+    &--applications.custom-select--applications-disabled {
+        margin-right: 0;
+    }
+    &--companies.custom-select--companies-disabled {
+        margin-right: 0;
+    }
+    &--jobs.custom-select--jobs-disabled {
+        margin-right: 0;
+    }
+    &--users.custom-select--users-disabled {
+        margin-right: 0;
+    }
+
+    &--company-contacts, &--company-addresses, &--company-jobs, &--user-addresses, &--user-jobs {
+        min-width: 2rem;
+        margin-right: 1.2rem;
+    }
+    &--company-contacts.custom-select--company-contacts-disabled {
+        margin-right: 0;
+    } 
+    &--company-addresses.custom-select--company-addresses-disabled {
+        margin-right: 0;
+    } 
+    &--company-jobs.custom-select--company-jobs-disabled {
+        margin-right: 0;
+    } 
+    &--user-addresses.custom-select--user-addresses-disabled {
+        margin-right: 0;
+    } 
+    &--user-jobs.custom-select--user-jobs-disabled {
+        margin-right: 0;
+    } 
+
+    &--companies-disabled {
+        color: #5a889f !important; // important because the placeholder class in the custom select is more specific
+        cursor: default;
+        pointer-events: none;
+        border: none;
+    }
+}
+
+
+.custom-select-value {
+    &--companies { color: white; }
+    &--applications,
+    &--companies, &--jobs, &--users {
+        font-size: 1.3rem;
+        // padding: .6rem .6rem;
+        border: none;
+        border-bottom: 1px solid white;
+    }
+    &--company-contacts, &--company-addresses, &--company-jobs, &--user-addresses, &--user-jobs {
+        font-size: 1.3rem;
+        // padding: .6rem .6rem;
+        border: none;
+        border-bottom: 1px solid firebrick;
+    }
+    &--company-contacts.placeholder, &--company-addresses.placeholder, &--company-jobs.placeholder, &--user-addresses.placeholder{
+        color: black;
+    }
+
+    &--applications::after,
+    &--companies::after, &--jobs::after, &--users::after {
+        position:absolute;
+        right: -1rem;
+        margin-top: 6px;
+        border-top-color: white;
+    }
+    &--applications-disabled,
+    &--companies-disabled, &--jobs-disabled, &--users-disabled {
+        color: #5a889f !important; // important because the placeholder class in the custom select is more specific
+        cursor: default;
+        pointer-events: none;
+        border: none;
+    }
+
+    &--applications.custom-select-value--applications-disabled::after,
+    &--jobs.custom-select-value--jobs-disabled::after,
+    &--companies.custom-select-value--companies-disabled::after,
+    &--users.custom-select-value--users-disabled::after {
+        visibility: hidden;
+    }
+    &--company-contacts.custom-select-value--company-contacts-disabled::after {
+        visibility: hidden;
+    }
+    &--company-addresses.custom-select-value--company-addresses-disabled::after {
+        visibility: hidden;
+    }
+    &--company-jobs.custom-select-value--company-jobs-disabled::after {
+        visibility: hidden;
+    }
+    &--user-addresses.custom-select-value--user-addresses-disabled::after {
+        visibility: hidden;
+    }
+    &--user-jobs.custom-select-value--user-jobs-disabled::after {
+        visibility: hidden;
+    }
+
+    &--company-contacts, &--company-addresses, &--company-jobs, &--user-addresses, &--user-jobs {
+        &::after {
+            position:absolute;
+            right: -1rem;
+            margin-top: 6px;
+            border-top-color: black;
+        }
+        &-disabled {
+            color: lighten(grey, 10%)!important;
+            cursor: default;
+            pointer-events: none;
+            border: none;
+        }
+    }
+    
+}
+
+.custom-select-options {
+    &--applications,
+    &--companies, &--company-contacts, &--company-addresses, &--company-jobs, &--user-addresses, &--user-jobs,
+    &--jobs, &--users {
+        font-size: 1.3rem;
+        padding: .1rem 0;
+        // margin-top: .5rem;
+    }
+
+    &--company-contacts, &--company-addresses, &--user-addresses, &--user-jobs {
+        &::-webkit-scrollbar {
+
+            width: 1px;
+        }
+        &::-webkit-scrollbar-thumb {
+
+            background-color: grey;
+        }
+        &::-webkit-scrollbar-track {
+
+            background-color: #eaeaea;
+        }
+        /* remove scrollbar from Firefox */
+        overflow: auto;
+        scrollbar-width: thin;
+    }
+}
+
+.custom-select-option {
+    &--applications,
+    &--companies, &--company-contacts, &--company-addresses, &--company-jobs, &--user-addresses, &--user-jobs,
+    &--jobs, &--users {
+        padding: .6rem 0;
+        justify-content: center;
+        color: black;
+    }
+}

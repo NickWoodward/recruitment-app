@@ -1,3 +1,5 @@
+import Select from './views/common/Select';
+import {gsap} from 'gsap';
 
 /**
  * Function to use in a Promise.race() call with an axios request. 
@@ -161,7 +163,7 @@ export const createDocxIcon = () => {
 export const createSearchBtn = (type) => {
     return `
         <div class="btn-wrapper btn-wrapper--${type}">            
-            <div class="search search--${type} search-btn--${type} btn">
+            <div class="search search-btn--${type} btn">
                 <input type="text" class="search__input search__input--${type}" />
                 <div class="search__icon--${type}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
@@ -173,3 +175,126 @@ export const createSearchBtn = (type) => {
         </div>
     `;
 };
+
+
+
+/**
+ * Populate and replace an existing select element with a custom element
+ * @param {Object} select. The existing select DOM element
+ * @param {Object[]} data. An array of the options' display values and data values
+ * @param {string} placeholderText. The custom select's placeholder value
+ * @param {string} groupBy. A parameter that exists as a key in the data array objects that 
+ * the options should be grouped by
+ * @param {string} modifier. An identifier for a specific select element
+ * @returns {Object} A new instance of the Select class
+*/
+export const populateSelect = (select, data, placeholderText, groupBy, modifiers, icon) => {
+    if(placeholderText) {
+        const placeholder = new Option(placeholderText);
+        placeholder.setAttribute('disabled', 'disabled');
+        placeholder.setAttribute('selected', 'selected');
+        placeholder.classList.add('placeholder');
+        select.append(placeholder);
+    } 
+
+    data.forEach((item, index) => {
+        let option; 
+
+        if(groupBy) {
+            // item[groupBy] should look for an element with the relevant item property
+            let group = select.querySelector(`optgroup[label="${item[groupBy]}"]`);
+            // If there's no group, and there should be, create it
+            if(!group) {
+                group = document.createElement('optgroup');
+                group.label = item[groupBy];
+            }
+
+            option = new Option(`${item.title}`, item.id);
+            option.setAttribute('data-group', group.label.toLowerCase());
+            group.append(option);
+
+            select.appendChild(group);
+        } else {
+            option = new Option(`${item.title}`, item.id);
+            option.className = 'modifier-option';
+            select.add(option, undefined);
+        }
+
+    });
+    return new Select({select, modifiers, selectIcon: icon, animations: getSelectTableAnimations()})
+
+}
+
+//// SELECT ANIMATIONS ////
+const getSelectAnimations = () => {
+    return [ animateSelectOut, animateSelectIn ];
+}
+
+const getSelectTableAnimations = () => {
+    return [ animateSelectOut, animateTableSelectIn ];
+};
+
+const animateTableSelectIn = (element) => {
+    const options = element.querySelectorAll('.custom-select-option--table');
+    gsap.set(element, { autoAlpha: 1 });
+    const tl = gsap.timeline();
+    tl
+    // .fromTo(element, { autoAlpha:0 }, { autoAlpha:1, duration:.1, ease: 'ease-out'})
+    .fromTo(options, { autoAlpha:0, y: -5 }, { autoAlpha:1, y: 0, stagger: -.03, ease: 'ease-out'}, '<')
+    return tl
+};
+
+const animateSelectOut = (element) => {
+    return gsap.fromTo(element, { autoAlpha:1 }, { autoAlpha:0, duration:.2, ease: 'ease-in', immediateRender:false  })
+}
+const animateSelectIn = (element) => {
+    return gsap.fromTo(element, { autoAlpha:0 }, { autoAlpha:1, duration:.2, ease: 'ease-out'})
+}
+
+    // [jobsInput, userInput].forEach(select => {return new Select({select, animations: getSelectAnimations()})});
+
+    //     if(!group) {
+    //         group = document.createElement("optgroup");
+    //         group.label = job.companyName;
+    //     }
+    //     const option = new Option(`${job.title}`, job.id);
+    //     option.setAttribute('data-group', group.label.toLowerCase());
+    //     group.append(option);
+
+    //     jobsInput.appendChild(group);
+    // });
+
+    // // Order the jobs by the company name
+    // jobs.sort((a, b) => a.companyName > b.companyName? 1:-1);
+
+    // const jobPlaceholder = new Option('Jobs');
+    // jobPlaceholder.setAttribute('disabled', 'disabled');
+    // jobPlaceholder.setAttribute('selected', 'selected');
+    // jobsInput.append(jobPlaceholder)
+
+    // const userPlaceholder = new Option('Applicants');
+    // userPlaceholder.setAttribute('disabled', 'disabled');
+    // userPlaceholder.setAttribute('selected', 'selected');
+    // userInput.append(userPlaceholder)
+
+    // jobs.forEach(job => {
+    //     let group = jobsInput.querySelector(`optgroup[label="${job.companyName}"]`);
+    //     if(!group) {
+    //         group = document.createElement("optgroup");
+    //         group.label = job.companyName;
+    //     }
+    //     const option = new Option(`${job.title}`, job.id);
+    //     option.setAttribute('data-group', group.label.toLowerCase());
+    //     group.append(option);
+
+    //     jobsInput.appendChild(group);
+    // });
+
+    // users.forEach(applicant => {
+    //     const option = new Option(`${applicant.applicantId}: ${applicant.firstName} ${applicant.lastName}`, applicant.applicantId);
+    //     option.className = 'job-option';
+    //     userInput.add(option, undefined);
+    // });
+
+    // [jobsInput, userInput].forEach(select => {return new Select({select, animations: getSelectAnimations()})});
+// }

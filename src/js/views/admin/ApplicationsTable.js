@@ -1,17 +1,26 @@
-import { createChevron } from '../../helpers';
+import { createChevron, populateSelect } from '../../helpers';
 import Table from '../common/Table';
 
 class ApplicationsTable extends Table {
     constructor() {
-        super()
+        super();
         this._data = {
-            displayIndex: false,
+            // Table controls/structure
+            heads: ['Name', 'Position', 'Company', 'Added'],
+            arrows: ['name', 'position', 'company', 'added'],
+            modifiers: ['checkbox', 'name', 'position', 'company', 'added'],
+            type: 'applications',
+
             tableCheckboxes: true,
             tableControls: this._createTableControls(),
-            arrows: ['name', 'position', 'company', 'added'],
-            rowsToDisplay: 5,
+
+            rowsToDisplay: 4,
             height: '',
-        }
+
+            // Search options
+            page: 1,
+            index: 0,
+        };
     }
 
     // The Child Tables are responsible for Headers and other Table elements
@@ -66,9 +75,7 @@ class ApplicationsTable extends Table {
                         </svg>
                     </div>
 
-                    <div class="custom-select custom-select--table custom-select--applications btn">
-                        <div class="dropdown-btn dropdown-btn--table">1</div>
-                    </div>
+                    <select class="select--table"></select>
 
                     <div class="forward-btn forward-btn--table forward-btn--applications btn">
                         <svg xmlns="http://www.w3.org/2000/svg" class="forward-icon forward-icon--table forward-icon--applications"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -82,10 +89,84 @@ class ApplicationsTable extends Table {
         `;
     }
 
+    // <div class="custom-select custom-select--table custom-select--applications btn">
+    //                     <div class="dropdown-btn dropdown-btn--table">1</div>
+    //                 </div>
 
     getNumRows() {
         return this._data.rowsToDisplay;
     }
+
+    setIndex(index) {
+        this._data.index = index;
+    } 
+    getIndex() {
+        return (this._data.page - 1) * this._data.rowsToDisplay;
+    }
+
+    setPage(page) {
+        if(typeof page === 'string') {
+            this._data.page += page === 'forwards'? 1:-1;
+        }
+        else {
+            this._data.page = page;
+        }
+    }
+    getPage() {
+        return this._data.page;
+    }
+
+    getTableTargets(e) {
+        // Record control
+        const addBtn = e.target.closest('.add-btn--applications');
+        const editBtn = e.target.closest('.edit-btn--applications');
+        const deleteBtn = e.target.closest('.delete-btn--applications');
+        const editRowBtns = e.target.closest('.td--edit');
+        const checkbox = e.target.closest('.td--checkbox');
+
+        // Search
+        const searchBtn = e.target.closest('.search-btn--table');
+
+        // Pagination
+        const backBtn = e.target.closest('.back-btn--applications');
+        const pageBtn = e.target.closest('.custom-select--applications');
+        const forwardBtn = e.target.closest('.forward-btn--applications');
+        
+        // Thead
+        const checkboxAll = e.target.closest('.checkbox--header');
+        const thead = e.target.closest('th') && !checkboxAll && !searchBtn;
+
+        // Row (Except the edit btn, checkbox, and the thead)
+        const row = e.target.closest('tbody .tr--applications') && !editRowBtns && !checkbox;
+
+        return { checkboxAll, thead, searchBtn, addBtn, editBtn, deleteBtn, backBtn, pageBtn, forwardBtn, editRowBtns, checkbox, row }
+    }
+
+    getCheckboxes() {
+        return { checkboxAll: document.querySelector('.checkbox--header'), checkboxes: document.querySelectorAll('.checkbox--row')}
+    }
+
+    init() {
+        this._parentElement = document.querySelector('.table__wrapper');
+        this._preventLabelPropagation();
+
+        const select = this._parentElement.querySelector('.select--table');
+        populateSelect(select, this._data.selectData, '1', null, ['table'], false)
+    }
+
+    _preventLabelPropagation() {
+        const labels = document.querySelectorAll('.checkbox-label');
+        const labelAll = document.querySelector('.checkbox-label--all');
+        labels.forEach(label => label.addEventListener('click', e => e.stopPropagation()));
+        labelAll.addEventListener('click', e => e.stopPropagation());
+    }
+
+    addClickHandler(handler) {
+        if(!this._parentElement) throw new Error('Error adding table handler');
+
+        this._parentElement.addEventListener('click', handler);
+    }
+
 }
 
 export default new ApplicationsTable();

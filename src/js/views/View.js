@@ -1,7 +1,6 @@
 // import '../../assets/icons/loader.svg';
 
 export default class View {
-
     _data;
 
     /**
@@ -14,19 +13,35 @@ export default class View {
      render(data, render = true) {
         // Data passed to render spread with current instance data (Former overwrites)
         this._data = {...this._data, ...data};
-        // console.log(this._data, 'IN VIEW', this);
         const markup = this._generateMarkup();
 
-        // console.log(this._data);
         if(this._parentElement && render) this._parentElement.insertAdjacentHTML('afterbegin', markup);
         else if(!render) return markup;
         else throw new Error(`Error rendering View`);
     }
 
+    /**
+     * Compare the new html document fragment to the existing html and update
+     * NB: Not to be used if the structure or number of contained elements changes
+     * @param {Object | Object[]} data: The data to be rendered
+     * @this {Object} View instance
+    */
+    update(data) {
+        this._data = {...this._data, ...data};
+        const newMarkup = this._generateMarkup();
 
-    // setData(data) {
-    //     this._data = data;
-    // }
+        // Convert markup string to a DOM element that isn't on the page
+        const newDOM = document.createRange().createContextualFragment(newMarkup).firstElementChild;
+        const newElements = Array.from(newDOM.querySelectorAll('*'));
+        const curElements = Array.from(this._parentElement.querySelectorAll('*'));
+
+        newElements.forEach((newEl, index) => {
+            const curEl = curElements[index];
+            if(!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue && newEl.firstChild.nodeValue.trim() !== '') {
+                curEl.textContent = newEl.textContent;
+            }
+        });
+    }
 
     clear() {
         this._parentElement.innerHTML = ''

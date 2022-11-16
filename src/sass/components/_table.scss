@@ -8,6 +8,7 @@ table {
     table-layout: fixed;
     border-collapse: collapse;
     min-width: 100%;
+
 }
 
 th {
@@ -22,14 +23,9 @@ th {
     }
 }
 
-.th__data {
-    position: relative;
-    display: inline;
-}
 
 tbody tr {
     position: relative;
-    border-bottom: a.$table-border;    
    
     &:last-of-type {
         border-bottom: none;
@@ -115,6 +111,9 @@ tbody tr {
 }
 
 .table__content--applications {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     grid-column: 1;
     height: var(--table-height--applications);
     background-color: white;
@@ -130,6 +129,7 @@ tbody tr {
     height: var(--row-height--applications);
     font-size: 1.5rem;
     color: a.$color-font-black;
+    box-shadow: 0 1px 0 0 #d5d8de;
 
     cursor: pointer;
 
@@ -145,8 +145,9 @@ thead .tr--applications {
     color: a.$color-font-grey;
 
     height: var(--thead-height--applications);
-    border-bottom: 1px solid #d5d8de;
+    // border-bottom: 1px solid #d5d8de;
 }
+
 
 .th--checkbox {
     width: 6.5rem;
@@ -168,6 +169,35 @@ thead .tr--applications {
 }
 .th--search {
     width: 12rem;
+}
+
+.th__data {
+    position: relative;
+    display: inline;
+}
+.td--checkbox {
+    position: relative;
+}
+.td__data--checkbox, .th__data--checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+
+}
+.checkbox-label, .checkbox-label--all {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+
 }
 .td--edit {
     text-align: right;
@@ -191,8 +221,7 @@ thead .tr--applications {
     }
 }
 
-.add-btn--table, .edit-btn--table, .delete-btn--table, .back-btn--table, .forward-btn--table,
-.custom-select--table, .search-btn--table {
+.add-btn--table, .edit-btn--table, .delete-btn--table, .back-btn--table, .forward-btn--table, .search-btn--table {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -205,6 +234,9 @@ thead .tr--applications {
 
     &:not(:first-of-type) {
         margin-left: .5rem;
+    }
+    &:not(:last-of-type) {
+        margin-right: .5rem;
     }
 
     &:hover {
@@ -237,9 +269,12 @@ thead .tr--applications {
 .back-btn--table { margin-left: auto; }
 
 .add-icon--table, .delete-icon--table, .back-icon--table, .forward-icon--table,
-.dropdown-btn--table  {
+.dropdown-btn--table {
     width: 2.2rem;
 }
 .edit-icon--table {
     width: 2rem;
+}
+.checkbox--applications {
+    accent-color: firebrick;
 }
