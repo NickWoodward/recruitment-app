@@ -153,15 +153,21 @@
             }
         }
     }
-    &-options--table.show {
+    &-options--table {
         display: flex;
         // 1 option to the right, the rest stack left
         right: calc((var(--option-width--table) + var(--option-margin--table)) * -1);
         width: auto;
         padding: 0;
         margin-top: var(--option-margin--table);
+        overflow: hidden;
         background-color: transparent;
         border: none;
+
+        & .active {
+            background-color: a.$color-primary;
+            color: white;
+        }
     }
     &-option--table {
         display: flex;

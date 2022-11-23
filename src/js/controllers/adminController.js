@@ -14,6 +14,10 @@ import '../../sass/admin.scss';
 const init = async () => {
     Header.render({admin: true, page: 'admin'});
 
+    // Get the number of rows the application table is set to display
+    const numRows = ApplicationsTable.getNumRows();
+    ApplicationModel.setPagination(0, numRows);
+
     try {
         // Get initial application data
         const results = await Promise.all([
@@ -23,15 +27,17 @@ const init = async () => {
         // Stats
         const { thisWeek, lastWeek, appsPerMonth } = results[1];
 
-        // Get the number of rows the application table is set to display
-        const numRows = ApplicationsTable.getNumRows();
 
-        // Rows are retrieved from the model separately to the fetch call
-        let tableData = ApplicationModel.getTableData(0, numRows);
+        let tableData = ApplicationModel.getTableData();
+        const totalPages = Math.ceil(ApplicationModel.getApplicationTotal()/ApplicationsTable.getNumRows());
+        tableData.selectData = [];
+        // for(let x = 1; x <= totalPages; x++) {
+        //     tableData.selectData.push({ title: `${x}`, id: x });
+        // }
         tableData.selectData = [
-            {title: 'a', id: 1}, {title: 'b', id: 2}, {title: 'c', id:3},
-            {title: 'a', id: 1}, {title: 'b', id: 2}, {title: 'c', id:3},
-            {title: 'a', id: 1}, {title: 'b', id: 2}, {title: 'c', id:3}
+            {title: '1', id: 1}, {title: '2', id: 2}, {title: '3', id:3},
+            {title: '4', id: 4}, {title: '5', id: 5}, {title: '6', id:6},
+            {title: '7', id: 7}, {title: '8', id: 8}, {title: '9', id:9}
         ]
 
         // Render the application dashboard
@@ -61,7 +67,7 @@ const addViewHandlers = () => {
     AdminSidebar.addSidebarHandler(displayDashboard);
     
     ApplicationsTable.init();
-    ApplicationsTable.addClickHandler(function(e) {
+    ApplicationsTable.addClickHandler(async function(e) {
         const targets = ApplicationsTable.getTableTargets(e);
         if(targets['addBtn']) console.log('Add Btn');
         if(targets['editBtn']) {
@@ -81,7 +87,7 @@ const addViewHandlers = () => {
             // Else display edit modal over summary
         };
         if(targets['backBtn']) movePage('backwards');
-        if(targets['pageBtn']) console.log('Page');
+        if(targets['pageBtn']) movePage(parseInt(targets['pageBtn'].dataset.value));
         if(targets['forwardBtn']) movePage('forwards');
         if(targets['editRowtargets']) console.log('Edit Btn');
         if(targets['row']) console.log('Row');
@@ -92,33 +98,76 @@ const addViewHandlers = () => {
                 checkbox.click();
             });
         }
-        if(targets['thead']) console.log('Thead');
+        if(targets['thead']) {
+            // Get all the table's possible heads
+            const headStrings = ApplicationsTable.getTableHeads();
+
+            // Pick the head that matches the target's classlist
+            const headString = headStrings.filter(str => {
+                return Array.from(targets['thead'].classList)[0].includes(str);
+            })[0];
+
+            // Change the model's orderField
+            ApplicationModel.setOrderField(headString);
+            // // Change the model's orderDirection
+            // ApplicationModel.toggleOrderDirection();
+            
+            // Change the table's arrow direction
+            ApplicationsTable.setArrowDirection(targets['thead']);
+
+            // Update the table
+            await ApplicationModel.fetchApplications();
+            const tableData = ApplicationModel.getTableData();
+        
+            // Update the View
+            ApplicationsTable.updateTable(tableData, 'applications');
+        }
    
         if(targets['searchBtn']) console.log('search');
     });
 }
 
-const movePage = (direction) => {
-    // Calculate the total pages
-    const applicationTotal = ApplicationModel.getApplications().length;
+
+/**
+ * Sets the Table page and index, the pagination in the model, and updates the table data
+ * @param {string || number} direction: The string 'forward'||'backward' to move +/-1, a number to move to that specific page
+ * @returns {undefined}
+*/
+const movePage = async(value) => {
+    const applicationTotal = ApplicationModel.getApplicationTotal();
     const numRows = ApplicationsTable.getNumRows();
     let curIndex = ApplicationsTable.getIndex();
 
-    // Set the table view's page and index
-    if(direction === 'forwards' && curIndex + numRows < applicationTotal) {
-        ApplicationsTable.setIndex(curIndex += ApplicationsTable.getNumRows());
-        ApplicationsTable.setPage('forwards');
-    } else if(direction === 'backwards' && curIndex - numRows >= 0) {
-        ApplicationsTable.setIndex(curIndex -= ApplicationsTable.getNumRows());
-        ApplicationsTable.setPage('backwards');
-    } else if(typeof direction === 'number' && direction > 0 && direction < applicationTotal) {
-        console.log('Moving to page', direction);
-    } else {
-        return;
-    }
+    const validForwards = value === 'forwards' && curIndex + numRows < applicationTotal;
+    const validBackwards = value === 'backwards' && curIndex - numRows >= 0;
+    const inRange = typeof value === 'number' && value >= 0 || value < applicationTotal;
 
-    // Get the model data
-    let tableData = ApplicationModel.getTableData(curIndex, curIndex + ApplicationsTable.getNumRows());
+    if(!validForwards && !validBackwards && !inRange) return;
+    
+    const customSelect = document.querySelector('.custom-select--application');
+
+    // Set the table view's page and index
+    if(validForwards) {
+        ApplicationsTable.setIndex(curIndex += numRows);
+        ApplicationsTable.setPage('forwards');
+    } 
+    if(validBackwards) {
+        ApplicationsTable.setIndex(curIndex -= numRows);
+        ApplicationsTable.setPage('backwards');
+    } 
+    if(inRange) {
+        curIndex = (value -1) * numRows;
+        ApplicationsTable.setIndex(curIndex);
+        ApplicationsTable.setPage(value);
+    } 
+
+    // Dispatch custom event for the select element
+    const navigationEvent = new CustomEvent('applicationsTableChange', { detail: { page: ApplicationsTable.getPage() } });
+    customSelect.dispatchEvent(navigationEvent, {bubbles: true});
+
+    ApplicationModel.setPagination(curIndex, numRows);
+    await ApplicationModel.fetchApplications();
+    const tableData = ApplicationModel.getTableData();
 
     // Update the View
     ApplicationsTable.updateTable(tableData, 'applications');

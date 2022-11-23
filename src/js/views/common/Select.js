@@ -1,4 +1,5 @@
 import {gsap} from 'gsap';
+import { isHidden } from '../../helpers';
 
 export default class Select {
     constructor({
@@ -81,16 +82,12 @@ export default class Select {
     } 
 
     _selectValue(value, group) {
-        console.log(this.sourceOptions);
         // Find the option in the source select
         const newSelectedOptionObject = this.sourceOptions.find((option, index) => {
             // The source options can include a placeholder, which should be skipped
             if(this.sourcePlaceholder && index === 0) return
-            console.log(option, option.value, value, 'group',group, option.value === value, option.value === value && option.group === group);
             return option.value === value && option.group === group;
         });
-        // console.log({value}, {newSelectedOptionObject});
-
         if(!newSelectedOptionObject) throw new Error('Cannot select option');
 
         // Placeholder is removed from label when option selected
@@ -104,7 +101,6 @@ export default class Select {
         newSelectedOptionObject.selected = true;
         newSelectedOptionObject.source.selected = true;
 
-        console.log(newSelectedOptionObject.label);
         this.customLabel.innerText = newSelectedOptionObject.label;
 
         // If the selected option isn't the placeholder, remove the class from the custom select
@@ -140,10 +136,10 @@ export default class Select {
     }
 
     _hideOptions() {
-        // If it loses focus AND isn't already hidden (from other methods eg closing via clicking an option)
-        if(this.customOptions.classList.contains('show')) {
+        if(this.animateOut) {
+            this.animateOut(this.customOptions);
+        } else if(this.customOptions.classList.contains('show')) {
             this.customOptions.classList.remove('show');
-            if(this.animateOut) this.animateOut(this.customOptions);
         }
     }
 
@@ -151,12 +147,8 @@ export default class Select {
         const option = e.target.closest('.custom-select-option');
         const label = e.target.closest('.custom-select-value');
 
-        if(label) {    
-            this.customOptions.classList.toggle('show');
-            const visible = this.customOptions.classList.contains('show');
-
-            if(visible && this.animateIn) this.animateIn(this.customOptions);
-            else if(this.animateOut) this.animateOut(this.customOptions);
+        if(label) { 
+            this._toggleOptions();
         }
         if(option && option.dataset.value !== this.customPlaceholder) {
             // Select the option
@@ -167,6 +159,36 @@ export default class Select {
             if(this.animateOut) this.animateOut(this.customOptions);
         }
 
+    }
+
+    _handleChangeEvent(e) {
+        this._selectValue(`${e.detail.page}`);
+    }
+
+    _toggleOptions() {
+        if(isHidden(this.customOptions)) {
+            this._showOptions();
+        } else {
+            this._hideOptions();
+        }
+    }
+    _showOptions() {
+        if(!isHidden(this.customOptions)) return;
+
+        if(this.animateIn) {
+            this.animateIn(this.customOptions);
+        } else {
+            this.customOptions.classList.add('show');
+        }
+    }
+    _hideOptions() {
+        if(isHidden(this.customOptions)) return;
+
+        if(this.animateOut) {
+            this.animateOut(this.customOptions);
+        } else {
+            this.customOptions.classList.remove('show');
+        }
     }
 
     _init() {
@@ -240,8 +262,110 @@ export default class Select {
     }
 
     _addEventListeners() {
-        // this.customSelect.addEventListener('blur', this._hideOptions.bind(this));
+        this.customSelect.addEventListener('blur', this._hideOptions.bind(this));
 
         this.customSelect.addEventListener('click', this._handleClick.bind(this));
+        this.customSelect.addEventListener(`${this.customClassModifiers[0]}sTableChange`, this._handleChangeEvent.bind(this));
     }
+}
+
+/**
+ * Populate and replace an existing select element with a custom element
+ * @param {Object} select. The existing select DOM element
+ * @param {Object[]} data. An array of the options' display values and data values
+ * @param {string} placeholderText. The custom select's placeholder value
+ * @param {string} groupBy. A parameter that exists as a key in the data array objects that 
+ * the options should be grouped by
+ * @param {string[]} modifier. An array of identifiers for a specific select element. First must be specific table name (used in pagination listener)
+ * @returns {Object} A new instance of the Select class
+*/
+export const populateSelect = (select, data, placeholderText, groupBy, modifiers, icon) => {
+    if(placeholderText) {
+        const placeholder = new Option(placeholderText);
+        placeholder.setAttribute('disabled', 'disabled');
+        placeholder.setAttribute('selected', 'selected');
+        placeholder.classList.add('placeholder');
+        select.append(placeholder);
+    } 
+
+    data.forEach(item => {
+        let option; 
+
+        if(groupBy) {
+            // item[groupBy] should look for an element with the relevant item property
+            let group = select.querySelector(`optgroup[label="${item[groupBy]}"]`);
+            // If there's no group, and there should be, create it
+            if(!group) {
+                group = document.createElement('optgroup');
+                group.label = item[groupBy];
+            }
+
+            option = new Option(`${item.title}`, item.id);
+            option.setAttribute('data-group', group.label.toLowerCase());
+            group.append(option);
+
+            select.appendChild(group);
+        } else {
+            option = new Option(`${item.title}`, item.id);
+            option.className = 'modifier-option';
+            select.add(option, undefined);
+        }
+
+    });
+    return new Select({select, modifiers, selectIcon: icon, animations: getSelectTableAnimations()})
+
+}
+
+//// SELECT ANIMATIONS ////
+const getSelectAnimations = () => {
+    return [ animateSelectOut, animateSelectIn ];
+}
+
+const getSelectTableAnimations = () => {
+    return [ animateTableSelectOut, animateTableSelectIn ];
+};
+
+const animateTableSelectIn = (element) => {
+    const options = element.querySelectorAll('.custom-select-option--table');
+    // gsap.set(element, { autoAlpha: 1 });
+    const tl = gsap.timeline();
+    tl
+    .fromTo(element, { autoAlpha:0 }, { autoAlpha:1, duration:.01, ease: 'ease-out'})
+    .fromTo(options, { autoAlpha:0, y: -5 }, { autoAlpha:1, y: 0, stagger: -.03, ease: 'ease-out'}, '>')
+    return tl
+};
+const animateTableSelectOut = (element) => {
+    const options = element.querySelectorAll('.custom-select-option--table');
+    const tl = gsap.timeline();
+
+    tl
+    .fromTo(options, 
+        { 
+            autoAlpha: 1, 
+            y: 0 
+        }, 
+        { 
+            autoAlpha: 0, 
+            y: -5, 
+            stagger: -.02, 
+            ease: 'ease-in',
+            immediateRender: false,
+            // onComplete: () => gsap.set(element, { autoAlpha: 0 })
+        })
+    .fromTo(element, 
+        { autoAlpha: 1 },
+        {
+            autoAlpha: 0,
+            duration: .01
+        }, '>'
+    );
+
+    return tl;
+};
+
+const animateSelectOut = (element) => {
+    return gsap.fromTo(element, { autoAlpha:1 }, { autoAlpha:0, duration:.2, ease: 'ease-in', immediateRender:false  })
+}
+const animateSelectIn = (element) => {
+    return gsap.fromTo(element, { autoAlpha:0 }, { autoAlpha:1, duration:.2, ease: 'ease-out'})
 }

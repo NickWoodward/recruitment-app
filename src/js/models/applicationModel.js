@@ -6,8 +6,9 @@ let state = {
     total: 0,
     searchOptions: {
         limit: 100,
-        // orderField: 'id',
-        // orderDirection: 'ASC',
+        index: 0,
+        orderField: 'title',
+        orderDirection: 'ASC',
         // searchTerm: ''
     },
     currentApplication: {},
@@ -16,14 +17,50 @@ let state = {
     }
 }
 
-export const getTableData = (start, end) => {
-    let rows = getApplications(start, end);
+export const setPagination = (index, limit) => {
+    state.searchOptions.index = index;
+    state.searchOptions.limit = limit;
+}
+export const setOrderField = (field) => {
+    if(!field) throw new Error('Cannot set orderField');
+
+    switch(field) {
+        case 'added': {
+            toggleOrderDirection('createdAt');
+            state.searchOptions.orderField = 'createdAt'; 
+            break;
+        }
+        case 'position': { 
+            toggleOrderDirection('title');
+            state.searchOptions.orderField = 'title'; 
+            break;
+        }
+        default: {
+            toggleOrderDirection(field);
+            state.searchOptions.orderField = field;
+        }
+    }
+}
+export const toggleOrderDirection = (field) => {
+    // If it's already the order field, order direction DESC (arrow up)
+    if(state.searchOptions.orderField === field) state.searchOptions.orderDirection = 'DESC';
+    else state.searchOptions.orderDirection = 'ASC';
+}
+
+export const getTableData = () => {
+    let rows = getApplications();
     let attributes = rows.map(({id, applicantId, jobId}) => {return { id, applicantId, jobId }});
 
-    attributes = attributes.map(attribute => Object.entries(attribute))
+    attributes = attributes.map(attribute => Object.entries(attribute));
 
+    rows = formatRows(rows);
+
+    return { rows, attributes }
+}
+
+const formatRows = (rows) => {
     // Format the application content
-    rows = rows.map(row => {
+    return rows.map(row => {
         const { 
             id,
             applicant: { 
@@ -43,15 +80,11 @@ export const getTableData = (start, end) => {
 
          return [`${firstName} ${lastName}`, title, companyName, applicationDate]
     });
-
-    return { rows, attributes }
 }
 
-export const getApplications = (start, end) => {
-    let applications = createDeepCopy(state.applications);
-
-    return applications.slice(start, end);
-};
+export const getApplications = () => {
+    return createDeepCopy(state.applications);
+}
 
 export const setApplications = (applications) => {
     state.applications = applications;
@@ -59,7 +92,10 @@ export const setApplications = (applications) => {
 
 const setApplicationTotal = (total) => {
     state.total = total;
-}
+};
+export const getApplicationTotal = () => {
+    return state.total;
+};
 
 export const fetchApplications = async() => {
     try {
@@ -80,7 +116,6 @@ export const fetchApplicationStats = async() => {
     try {
         const { data } = await adminAPI.getApplicationStats(state.searchOptions, state.stats);
         return data;
-        // return Promise.resolve({ activeUsers: 5, dailyApplications: 12, monthlyApplications: 57 });
     } catch(err) {
         throw new Error('Cannot get Application Statistics');
     }

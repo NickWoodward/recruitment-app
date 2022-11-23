@@ -120,8 +120,6 @@ class Table extends View {
         const controlsHeight = this._data.tableControls? style.getPropertyValue(`--table-controls-height--${modifier}`) : 0
         
         const tableHeight = `${parseFloat(rowHeight) * numRows + parseFloat(theadHeight) + parseFloat(controlsHeight)}rem`;
-        console.log('rowHeight', parseFloat(rowHeight), 'numRows', numRows, 'theadHeight', parseFloat(theadHeight), 'controlsHeight', parseFloat(controlsHeight) );
-        console.log(parseFloat(rowHeight) * numRows + parseFloat(theadHeight) + parseFloat(controlsHeight));
         const root = document.querySelector(':root');
         root.style.setProperty(`--table-height--${modifier}`, tableHeight);
 
@@ -149,11 +147,6 @@ class Table extends View {
         const {rows, modifiers, type, attributes, rowsToDisplay} = this._data;
         const tl = gsap.timeline();
 
-
-        // // Calculate table height
-        // const tableHeight = this._setTableHeight(rows.length, type);
-        // const tableContent = this._parentElement.querySelector(`.table__content--${type}`);
-
         const thead = this._parentElement.querySelector(`.thead--${type}`);
         const curTbody = this._parentElement.querySelector(`.tbody--${type}`);
         const newTbody = this._createTbody(rows, modifiers, type, attributes);
@@ -170,11 +163,6 @@ class Table extends View {
             })
         );
 
-        // // If the table is going to shrink, wait till the rows have animated out
-        // if(rows.length < rowsToDisplay) {
-        //     tl.add(gsap.to(tableContent), { height: tableHeight });
-        // }
-
         tl.add(() => {
             thead.insertAdjacentHTML('afterend', newTbody);
             gsap.fromTo(`tbody .tr--${type}`, 
@@ -188,115 +176,6 @@ class Table extends View {
         });
     }
 
-    // updateRows(data) {
-    //     this._data = {...this._data, ...data};
-    //     const {heads, rows, modifiers, type, attributes} = this._data;
-
-    //     // Create the new HtmlString
-    //     const newTable = `<table class="table--${type}">
-    //             ${this._createThead(heads, modifiers, type)}
-    //             ${this._createTbody(rows, modifiers, type, attributes)}
-    //         </table>
-    //     `;
-
-    //     // Convert the string to a fragment
-    //     const newHTML = document.createRange().createContextualFragment(newTable);
-    //     const curHTML = this._parentElement.querySelector(`.table--${type}`);
-
-    //     // Check that the new table's html differs
-    //     if(newHTML.isEqualNode(curHTML)) return;
-    
-    //     const curRows = Array.from(curHTML.querySelectorAll(`tbody .tr--${type}`));
-    //     const newRows = Array.from(newHTML.querySelectorAll(`tbody .tr--${type}`));
-    //     // console.log(curRows, newRows);
-
-    //     console.log(curRows);
-
-    //     // Potential flows:
-    //     // - The arrays are the same length: Check if there's a text node, assign the new value
-    //     // - Current array > New Array: Loop through the New array assigning values, hide the rest
-    //     // - New Array > Current Array: Loop through the Current array assigning values, hide the rest
-
-    //     // +ive: curRows > newRows
-    //     // -ive: newRows > curRows
-    //     const difference = curRows.length - newRows.length;
-        
-    //     if(difference > 0) {
-    //         console.log(`${difference} more Current rows than New rows`);
-    //     } else if(difference < 0) {
-    //         console.log(`${difference} more New rows than Current rows`);
-    //     } else {
-    //         console.log('Same number of rows');
-    //         curRows.forEach((curEl, index) => {
-    //             const newEl = newRows[index];
-    //             if(newEl.isEqualNode(curEl)) return;
-    //             this.updateRow(curEl, newEl);
-    //         });
-    //     }
-    // }
-
-    // updateRow(el, newEl) {
-
-    // }
-
-    // Select the current table html, 
-    // create a fragment with the innerHtml changed, insert back into the DOM
-
-//     updateTable(data, modifier) {
-//         const tl = gsap.timeline();
-
-//         // Current elements onscreen
-//         const curTable = document.querySelector('.table--applications');
-//         const curTableRows = Array.from(curTable.querySelectorAll('tbody tr'));
-//         const curTableParent = curTable.parentElement;
-
-//         // Fragment to recreate the table 'offline'
-//         const fragmentContainer = document.createDocumentFragment();
-//         const table = document.createElement('table');
-
-//         table.innerHTML = curTable.innerHTML;
-//         const tableRows = Array.from(table.querySelectorAll('tbody tr'));
-
-
-//         tl.add(gsap.to(curTableRows, { opacity: 0 }));
-//         console.log(curTableRows, curTableParent)
-//         // this._createTbody(rows, modifiers, type, attributes) 
-
-
-//         // curTableRows.forEach((row, i) => {
-//         //     console.log(curTableRows[i].isEqualNode(tableRows[i]));
-//         //     // If different
-//         //     if(!curTableRows[i].isEqualNode(tableRows[i])) {
-//         //         // Delete the row
-
-
-//         //     }
-//         // });
-
-// // table.forEach(el => console.log(el));
-
-//         // fragmentContainer.appendChild(table);
-
-//         // // Remove the existing table
-//         // curTable.parentElement.removeChild(curTable);
-//         // curTableParent.prepend(fragment);
-
-
-
-//         // const element  = document.getElementById('ul'); // assuming ul exists
-//         // const browsers = ['Firefox', 'Chrome', 'Opera',
-//         //     'Safari', 'Internet Explorer'];
-
-//         // browsers.forEach((browser) => {
-//         //     const li = document.createElement('li');
-//         //     li.textContent = browser;
-//         //     fragment.appendChild(li);
-//         // });
-
-//         // element.appendChild(fragment);
-
-//     }
-
     /**
      * Get the rows with a selected checkbox
      * @returns {string} A markup string of the table
@@ -306,20 +185,6 @@ class Table extends View {
         const checked = this._parentElement.querySelectorAll('input[type=checkbox]:checked');
         return Array.from(checked);
     }
-
-
-
-    // replaceTextNodes(node, newText) {
-    //     node.childNodes.forEach(function(el) {
-    //       if (el.nodeType === 3) {  // If this is a text node, replace the text
-    //         if (el.nodeValue.trim() !== "") { // Ignore this node it it an empty text node
-    //           el.nodeValue = newText;
-    //         }
-    //       } else { // Else recurse on this node
-    //         replaceTextNodes(el);
-    //       }
-    //     });
-    // }
 }
 
 export default Table;

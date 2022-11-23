@@ -1,4 +1,6 @@
-import { createChevron, populateSelect } from '../../helpers';
+import {gsap} from 'gsap';
+import { createChevron } from '../../helpers';
+import { populateSelect } from '../common/Select';
 import Table from '../common/Table';
 
 class ApplicationsTable extends Table {
@@ -10,6 +12,9 @@ class ApplicationsTable extends Table {
             arrows: ['name', 'position', 'company', 'added'],
             modifiers: ['checkbox', 'name', 'position', 'company', 'added'],
             type: 'applications',
+
+            arrowElements: null,
+            activeArrow: null,
 
             tableCheckboxes: true,
             tableControls: this._createTableControls(),
@@ -99,6 +104,7 @@ class ApplicationsTable extends Table {
 
     setIndex(index) {
         this._data.index = index;
+
     } 
     getIndex() {
         return (this._data.page - 1) * this._data.rowsToDisplay;
@@ -111,9 +117,37 @@ class ApplicationsTable extends Table {
         else {
             this._data.page = page;
         }
+
+        this._setPaginationElement();
+    }
+    _setPaginationElement() {
+        Array.from(this._selectOptions).forEach(el => el.classList.remove('active'));
+        this._selectOptions[this._data.page -1].classList.add('active');
     }
     getPage() {
         return this._data.page;
+    }
+
+    setArrowDirection(head) {
+        if(!head) throw new Error('Cannot set arrow direction');
+        const arrow = head.querySelector('.table__arrow');
+        if(!arrow) return;
+
+        this.activeArrow = arrow;
+        
+        if(arrow.direction === 'none' || arrow.direction === 'up') {
+            gsap.to(arrow, { rotation: 90 });
+            arrow.direction = 'down';
+        } else {
+            gsap.to(arrow, { rotation: -90 });
+            arrow.direction = 'up';
+        }
+
+        console.log(head, this.activeArrow);
+    }
+
+    getTableHeads() {
+        return this._data.heads.map(head => head.toLowerCase());
     }
 
     getTableTargets(e) {
@@ -129,12 +163,12 @@ class ApplicationsTable extends Table {
 
         // Pagination
         const backBtn = e.target.closest('.back-btn--applications');
-        const pageBtn = e.target.closest('.custom-select--applications');
+        const pageBtn = e.target.closest('.custom-select-option--table');
         const forwardBtn = e.target.closest('.forward-btn--applications');
         
         // Thead
         const checkboxAll = e.target.closest('.checkbox--header');
-        const thead = e.target.closest('th') && !checkboxAll && !searchBtn;
+        const thead = !checkboxAll && !searchBtn && e.target.closest('th');
 
         // Row (Except the edit btn, checkbox, and the thead)
         const row = e.target.closest('tbody .tr--applications') && !editRowBtns && !checkbox;
@@ -151,7 +185,15 @@ class ApplicationsTable extends Table {
         this._preventLabelPropagation();
 
         const select = this._parentElement.querySelector('.select--table');
-        populateSelect(select, this._data.selectData, '1', null, ['table'], false)
+        populateSelect(select, this._data.selectData, '1', null, ['application', 'table'], false);
+        this._selectOptions = this._parentElement.querySelectorAll('.custom-select-option');
+        this._selectOptions[0].classList.add('active');
+
+        this.activeArrow = this._parentElement.querySelector('.table__arrow--added');
+        this.activeArrow.classList.add('active');
+
+        this.arrows = Array.from(this._parentElement.querySelectorAll('.table__arrow'));
+        this.arrows.forEach(arrow => arrow.direction = 'none');
     }
 
     _preventLabelPropagation() {

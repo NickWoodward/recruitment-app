@@ -1,8 +1,10 @@
 @use '../abstract' as a;
 
 table {
-    --row-padding--sm: 1.5rem;
-    --row-padding--md: 2.5rem;
+    --row-padding--sm: .5rem;
+    --row-padding--md: 1.5rem;
+    --row-padding-right--md: 2.5rem;
+    --checkbox-offset: -1rem;
 
     display: table;
     table-layout: fixed;
@@ -16,10 +18,10 @@ th {
     text-align: left;
     // background-color: #f9fafb;
     &:first-of-type {
-        padding-left: var(--row-padding--md);
+        padding-left: var(--row-padding--sm);
     }
     &:last-of-type {
-        padding-right: var(--row-padding--md);
+        padding-right: calc(var(--row-padding-right--md));
     }
 }
 
@@ -55,13 +57,11 @@ tbody tr {
     width: 1.4rem;
     fill: a.$color-primary;
 
-    &:not(&--added) {
-        right: 0;
-        transform: translateY(-50%) translateX(calc(100% + 1rem));
-    }
-    &--added {
-        left: 0;
-        transform: translateY(-50%) translateX(calc(-100% - 1rem));
+    left: 0;
+    transform: translateY(-50%) translateX(calc(-100% + -.5rem)) rotate(90deg);
+
+    &.active {
+        transform: translateY(-50%) translateX(calc(-100% + -.5rem)) rotate(180deg);
     }
 }
 
@@ -150,13 +150,16 @@ thead .tr--applications {
 
 
 .th--checkbox {
-    width: 6.5rem;
+    width: 8.5rem;
+    & input{
+        transform: translateX(var(--checkbox-offset));
+    }
 }
 .th--name {
     width: 18rem;
 }
 .th--position {
-    width: 22rem;
+    width: 20rem;
 }
 .th--cv {
     width: 5rem;
@@ -177,6 +180,9 @@ thead .tr--applications {
 }
 .td--checkbox {
     position: relative;
+    & input{
+        transform: translateX(var(--checkbox-offset));
+    }
 }
 .td__data--checkbox, .th__data--checkbox {
     position: absolute;
@@ -201,12 +207,18 @@ thead .tr--applications {
 }
 .td--edit {
     text-align: right;
-    padding-right: calc(var(--row-padding--md) + .8rem);
+    padding-right: calc(var(--row-padding-right--md) + .8rem);
     font-weight: 700;
     color: firebrick;
 }
 
 .td--name, .td--position, .td--company {
+    padding-right: 3rem;
+    // overflow: hidden;
+    // white-space: nowrap;
+    // text-overflow: ellipsis;
+}
+.td__data--name, .td__data--position, .td__data--company {
     padding-right: 3rem;
     overflow: hidden;
     white-space: nowrap;
